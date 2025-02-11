@@ -13,4 +13,4 @@
 
   - ffmpeg -i output1.webm -vf "scale=100:100,format=gray" -r 10 frames/frame%04d.png
 
--
+- Convert each frame into an ascii
