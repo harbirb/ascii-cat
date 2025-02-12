@@ -35,7 +35,7 @@ fn main() {
         let ascii_frame = std::fs::read_to_string(file_path).unwrap();
         clear().unwrap();
         print!("{}", ascii_frame);
-        thread::sleep(Duration::from_millis(100));
+        thread::sleep(Duration::from_millis(33));
     }
 }
 
