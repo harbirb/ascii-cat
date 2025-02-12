@@ -13,4 +13,12 @@
 
   - ffmpeg -i output1.webm -vf "scale=100:100,format=gray" -r 10 frames/frame%04d.png
 
-- Convert each frame into an ascii
+- Convert each frame into an ascii. See code in main.rs
+
+TODO:
+
+- optimize each stage, video, frame rate, resolution etc
+- remove background or black background (no chars except for cat shape)
+- change to unicode font (evenly spaced text)
+- Reduce flickering in terminal
+- package it as an executable
