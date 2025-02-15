@@ -1,18 +1,16 @@
-use clearscreen::clear;
 use crossterm::{
     cursor::MoveTo,
     terminal::{Clear, ClearType, EnterAlternateScreen},
     ExecutableCommand,
 };
 use std::{
-    convert,
     io::{self, Write},
     path::{self, Path},
     thread,
     time::{Duration, Instant},
 };
 
-use image::{buffer, ImageBuffer, LumaA};
+use image::{ ImageBuffer, LumaA};
 
 const ASCII_CHARS: &str = "@%#*+=-:. ";
 
