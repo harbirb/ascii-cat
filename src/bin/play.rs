@@ -1,5 +1,6 @@
 use std::{io::{self,  ErrorKind, Write}, path, time::Duration};
-use crossterm::{cursor::MoveTo, execute, terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen}};
+use crossterm::{execute, terminal::EnterAlternateScreen};
+// use crossterm::terminal::LeaveAlternateScreen;
 use glob::glob;
 
 
@@ -22,7 +23,7 @@ fn play_ascii_frames(output_dir: &str, frame_delay: Duration) -> Result<(), std:
 
 
     execute!(stdout, EnterAlternateScreen)?;
-    while true {
+    loop {
         for frame_path in &frame_paths {
             let ascii_frame = std::fs::read_to_string(&frame_path)?;
             // let mut buffer = String::new();
@@ -35,8 +36,8 @@ fn play_ascii_frames(output_dir: &str, frame_delay: Duration) -> Result<(), std:
             std::thread::sleep(frame_delay);
         }
     }
-    execute!(stdout, LeaveAlternateScreen)?;
-    Ok(())
+    // execute!(stdout, LeaveAlternateScreen)?;
+    // Ok(())
 }
 
 fn get_frame_paths(directory: &str) -> Result<Vec<path::PathBuf>, std::io::Error> {
