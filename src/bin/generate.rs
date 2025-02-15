@@ -1,21 +1,24 @@
-use std::{fs::{self, create_dir_all}, path::{self, Path}};
+use std::{env, fs::{self, create_dir_all}, path::{self}};
 
 use image::ImageBuffer;
 
-pub fn main() -> Result<(), image::ImageError> {
-    let frame_paths = get_frame_paths("src/frames")?;
-    let output_dir = "src/ascii_frames";
-    generate_ascii_frames(frame_paths, output_dir)?;
+pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let exe_path = env::current_exe()?;
+    let exe_dir = exe_path.parent().ok_or("Could not get executable directory")?;
+    let frame_dir = exe_dir.join("frames");
+    let output_dir = exe_dir.join("ascii_frames");
+    generate_ascii_frames(frame_dir, output_dir)?;
     Ok(())
 }
 
-fn generate_ascii_frames(frame_paths: Vec<path::PathBuf>, output_dir: &str) -> Result<(), image::ImageError> {
-    create_dir_all(output_dir)?;
+fn generate_ascii_frames(frame_path: path::PathBuf, output_dir: path::PathBuf) -> Result<(), image::ImageError> {
+    let frame_paths = get_frame_paths(frame_path)?;
+    create_dir_all(&output_dir)?;
     for frame_path in frame_paths {
         let img: ImageBuffer<image::LumaA<u8>, Vec<u8>> = image::open(&frame_path)?.to_luma_alpha8();
         let ascii_frame = convert_to_ascii(&img);
 
-        let output_path = Path::new(output_dir)
+        let output_path = output_dir
             .join(frame_path.file_name().unwrap())
             .with_extension("txt");
         fs::write(output_path, &ascii_frame)?;
@@ -48,7 +51,7 @@ fn convert_to_ascii(image: &image::ImageBuffer<image::LumaA<u8>, Vec<u8>>) -> St
 }
 
 
-fn get_frame_paths(path: &str) -> Result<Vec<path::PathBuf>, std::io::Error> {
+fn get_frame_paths(path: path::PathBuf) -> Result<Vec<path::PathBuf>, std::io::Error> {
     let mut paths = Vec::new();
     for entry in std::fs::read_dir(path)? {
         let path = entry?.path();

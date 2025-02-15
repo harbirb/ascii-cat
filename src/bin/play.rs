@@ -1,17 +1,19 @@
-use std::{io::{self,  ErrorKind, Write}, path, time::Duration};
+use std::{env, io::{self,  ErrorKind, Write}, path, time::Duration};
 use crossterm::{execute, terminal::EnterAlternateScreen};
 // use crossterm::terminal::LeaveAlternateScreen;
 use glob::glob;
 
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let output_dir = "src/ascii_frames";
+    let exe_path = env::current_exe()?;
+    let exe_dir = exe_path.parent().ok_or("Could not get executable directory")?;
+    let frames_dir = exe_dir.join("ascii_frames");
     let frame_delay = Duration::from_millis(50);
-    play_ascii_frames(output_dir, frame_delay)?;
+    play_ascii_frames(frames_dir, frame_delay)?;
     Ok(())
 }
 
-fn play_ascii_frames(output_dir: &str, frame_delay: Duration) -> Result<(), std::io::Error> {
+fn play_ascii_frames(output_dir: path::PathBuf, frame_delay: Duration) -> Result<(), std::io::Error> {
     let frame_paths = get_frame_paths(output_dir)?;
     
     if frame_paths.is_empty() {
@@ -26,9 +28,6 @@ fn play_ascii_frames(output_dir: &str, frame_delay: Duration) -> Result<(), std:
     loop {
         for frame_path in &frame_paths {
             let ascii_frame = std::fs::read_to_string(&frame_path)?;
-            // let mut buffer = String::new();
-            // buffer.push_str(&ascii_frame);
-            
             // execute!(stdout, Clear(ClearType::All))?;
             // execute!(stdout, MoveTo(0, 0))?;
             write!(stdout, "{}", ascii_frame)?;
@@ -40,10 +39,11 @@ fn play_ascii_frames(output_dir: &str, frame_delay: Duration) -> Result<(), std:
     // Ok(())
 }
 
-fn get_frame_paths(directory: &str) -> Result<Vec<path::PathBuf>, std::io::Error> {
-    let pattern = format!("{}/frame*.txt", directory);
+fn get_frame_paths(directory: path::PathBuf) -> Result<Vec<path::PathBuf>, std::io::Error> {
+    let pattern = directory.join("*.txt");
+    let pattern_str = pattern.to_str().ok_or(io::Error::new(ErrorKind::Other, "Invalid path"))?;
     let mut paths = Vec::new();
-    match glob(&pattern) {
+    match glob(&pattern_str) {
         Ok(entries) => {
             for entry in entries {
                 match entry {

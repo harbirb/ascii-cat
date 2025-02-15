@@ -30,6 +30,6 @@
   - depends on user's terminal setting
 - ~~Reduce flickering in terminal~~
   - added double buffering to make animation smoother
-- Using a different gui
 - add a slider to change the speed of spinning
-- package it as an executable
+- ~~package it as an executable~~
+- embed files into the executable
