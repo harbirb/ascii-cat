@@ -1,28 +1,37 @@
-use std::{env, fs::{self, create_dir_all}, path::{self}};
+use std::{fs::{self, create_dir_all}, path::{self, Path}};
 
 use image::ImageBuffer;
+use serde_json::{json, to_string, Value};
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let exe_path = env::current_exe()?;
-    let exe_dir = exe_path.parent().ok_or("Could not get executable directory")?;
-    let frame_dir = exe_dir.join("frames");
-    let output_dir = exe_dir.join("ascii_frames");
-    generate_ascii_frames(frame_dir, output_dir)?;
+    let frames_dir = "assets/frames";
+    let output_dir = "assets";
+    generate_ascii_frames(&frames_dir, &output_dir)?;
     Ok(())
 }
 
-fn generate_ascii_frames(frame_path: path::PathBuf, output_dir: path::PathBuf) -> Result<(), image::ImageError> {
-    let frame_paths = get_frame_paths(frame_path)?;
-    create_dir_all(&output_dir)?;
+fn generate_ascii_frames(frames_dir: &str, output_dir: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let frame_paths = get_frame_paths(frames_dir)?;
+    create_dir_all(output_dir)?;
+
+    // using json
+    let mut ascii_frames: Vec<Value> = Vec::new();
+
+
     for frame_path in frame_paths {
         let img: ImageBuffer<image::LumaA<u8>, Vec<u8>> = image::open(&frame_path)?.to_luma_alpha8();
         let ascii_frame = convert_to_ascii(&img);
+        ascii_frames.push(json!(ascii_frame));
 
-        let output_path = output_dir
-            .join(frame_path.file_name().unwrap())
-            .with_extension("txt");
-        fs::write(output_path, &ascii_frame)?;
+        // let output_path = output_dir
+        //     .join(frame_path.file_name().unwrap())
+        //     .with_extension("txt");
+        // fs::write(output_path, &ascii_frame)?;
     }
+    let json_data = json!(ascii_frames);
+    let json_string = to_string(&json_data)?;
+    let output_path = Path::new(output_dir).join("ascii_frames.json");
+    fs::write(&output_path, json_string)?;
     Ok(())
 }
 
@@ -51,7 +60,7 @@ fn convert_to_ascii(image: &image::ImageBuffer<image::LumaA<u8>, Vec<u8>>) -> St
 }
 
 
-fn get_frame_paths(path: path::PathBuf) -> Result<Vec<path::PathBuf>, std::io::Error> {
+fn get_frame_paths(path: &str) -> Result<Vec<path::PathBuf>, std::io::Error> {
     let mut paths = Vec::new();
     for entry in std::fs::read_dir(path)? {
         let path = entry?.path();
