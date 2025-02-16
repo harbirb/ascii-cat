@@ -7,7 +7,7 @@ const ASCII_FRAMES: &str = include_str!("../../assets/ascii_frames.json");
 
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
     
-    let frame_delay = Duration::from_millis(50);
+    let frame_delay = Duration::from_millis(20);
     let frames = get_frames()?;
     play_ascii_frames(frames, frame_delay)?;
     Ok(())

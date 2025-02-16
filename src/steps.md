@@ -14,22 +14,22 @@
 
 - Extract frames
 
-  - ffmpeg -i output_white.webm -vf "scale=60:60,format=gray" -r 30 frames/frame%04d.png
+  - ffmpeg -i output_white.webm -vf "scale=50:50,format=gray" -r 60 frames/frame%04d.png
 
 - Convert each frame into an ascii. See code in main.rs
 
 ## TODO:
 
 - optimize
-  - framerate
-  - original video
-  - image size
+  - framerate - 60fps best, lags at 30, flickers at 120
+  - original video - cropped to fit cat only
+  - image size - scale=80:50 since the console distorts aspect ratio
+  - add empty lines above each frame to prevent seeing previous frame above in animation
 - ~~Fix background of cat (no chars except for cat shape)~~
   - white background in ffmpeg
 - ~~change to unicode font (evenly spaced text)~~
   - depends on user's terminal setting
 - ~~Reduce flickering in terminal~~
   - added double buffering to make animation smoother
-- add a slider to change the speed of spinning
 - ~~package it as an executable~~
-- embed files into the executable
+- ~~embed frames into the executable~~

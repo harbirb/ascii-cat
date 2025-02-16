@@ -22,11 +22,6 @@ fn generate_ascii_frames(frames_dir: &str, output_dir: &str) -> Result<(), Box<d
         let img: ImageBuffer<image::LumaA<u8>, Vec<u8>> = image::open(&frame_path)?.to_luma_alpha8();
         let ascii_frame = convert_to_ascii(&img);
         ascii_frames.push(json!(ascii_frame));
-
-        // let output_path = output_dir
-        //     .join(frame_path.file_name().unwrap())
-        //     .with_extension("txt");
-        // fs::write(output_path, &ascii_frame)?;
     }
     let json_data = json!(ascii_frames);
     let json_string = to_string(&json_data)?;
@@ -36,7 +31,7 @@ fn generate_ascii_frames(frames_dir: &str, output_dir: &str) -> Result<(), Box<d
 }
 
 fn convert_to_ascii(image: &image::ImageBuffer<image::LumaA<u8>, Vec<u8>>) -> String {
-    const ASCII_CHARS: &[char] = &['@', '%', '#', '*', '+', '=', '-', '.', ' '];
+    const ASCII_CHARS: &[char] = &['@', '%', '#', '*', '+', '=', '-', ':', ',', '.', ' '];
     const BRIGHTNESS_TO_INDEX: [usize; 256] = {
         let mut indices = [0; 256];
         let f_len  = ASCII_CHARS.len()  as f32;
@@ -49,6 +44,10 @@ fn convert_to_ascii(image: &image::ImageBuffer<image::LumaA<u8>, Vec<u8>>) -> St
     };
 
     let mut ascii_frame = String::new();
+    for _ in 0..10 {
+        ascii_frame.push('\n');
+    }
+    
     for row in image.rows() {
         for &pixel in row {
             let brightness = pixel[0];
