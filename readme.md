@@ -3,8 +3,8 @@
 A terminal-based ASCII animation of the viral [OIIAI Cat](https://www.youtube.com/watch?v=ZHgyQGoeaB0), built as a personal project to learn Rust. This project transforms a video of the OIIAI cat into a smooth, text-based animation using FFmpeg for video processing and Rust for ASCII conversion and playback.
 
 ## Usage
-
-Run any executable in the /playable folder to play the ASCII animations. Adjust terminal size if needed
+[DEMO](https://www.youtube.com/watch?v=juDaxUs1Frc)
+Run any executable in the /playable folder to play the ASCII animations. Adjust terminal size if needed. 
 
 ## Steps
 
